@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Tailwind 4 shows the default cursor on buttons, so every clickable control gets a pointer here */
+@layer base {
+  button:not(:disabled),
+  select {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
