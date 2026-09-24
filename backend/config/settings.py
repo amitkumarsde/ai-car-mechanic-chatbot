@@ -65,15 +65,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# SQLite file path comes from env so the server can keep it outside the code folder
+# SQLite file lives in the backend folder unless SQLITE_PATH says otherwise
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": os.getenv("SQLITE_PATH") or str(BASE_DIR / "db.sqlite3"),
-        "OPTIONS": {
-            "init_command": "PRAGMA journal_mode=WAL;",
-            "timeout": 20,
-        },
+        "OPTIONS": {"timeout": 20},
     }
 }
 
@@ -112,7 +109,7 @@ REST_FRAMEWORK = {
     },
     "EXCEPTION_HANDLER": "chat.exceptions.api_exception_handler",
     "UNAUTHENTICATED_USER": None,
-    # Set to 1 behind nginx so rate limits use the real user IP
+    # Set to 1 behind a proxy (like PythonAnywhere) so rate limits use the real user IP
     "NUM_PROXIES": int(os.getenv("NUM_PROXIES")) if os.getenv("NUM_PROXIES") else None,
 }
 
@@ -122,7 +119,6 @@ GEMINI_FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL") or "gemini-3.1-flash-
 
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-    SECURE_SSL_REDIRECT = os.getenv("SECURE_SSL_REDIRECT", "True").lower() == "true"
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 3600

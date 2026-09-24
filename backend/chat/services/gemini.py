@@ -31,7 +31,7 @@ class GeminiError(Exception):
 def get_client():
     global _client
     if _client is None:
-        # Retry only "server busy" errors; 50s per try keeps main + backup model under the 120s server timeout
+        # Retry only "server busy" errors; 50s per try keeps main + backup model within a normal web request
         retry = types.HttpRetryOptions(attempts=3, http_status_codes=[500, 502, 503, 504])
         _client = genai.Client(api_key=settings.GEMINI_API_KEY, http_options=types.HttpOptions(timeout=50_000, retry_options=retry))
     return _client
